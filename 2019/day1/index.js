@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const reader = require('readline')
 
 let totalFuel = 0
@@ -14,14 +15,14 @@ function totalFuelForModule(mass) {
     if (additionalFuel <= 0)
       break;
 
-      fuel += additionalFuel  
+      fuel += additionalFuel
   }
 
   return fuel
 }
 
 const lineReader = reader.createInterface({
-  input: fs.createReadStream('input.txt'),
+  input: fs.createReadStream(path.join(__dirname, 'input.txt')),
   terminal: false
 })
 

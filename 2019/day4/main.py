@@ -1,5 +1,3 @@
-# password range 265275-781584
-
 start = 265275
 end = 781584
 count = 0
@@ -16,15 +14,12 @@ def checkIncremental(x):
 
 def checkDuplicates(x):
   digits = str(x)
-  return len(digits) != len(set(digits))
+  counters = dict((i, digits.count(i)) for i in digits)
+
+  return any(x > 1 and x == 2 for x in counters.values())
 
 for x in range(start, end):
-  if not checkIncremental(x):
-    continue
-
-  if not checkDuplicates(x):
-    continue
-
-  count += 1
+  if checkIncremental(x) and checkDuplicates(x):
+    count += 1
 
 print(count)

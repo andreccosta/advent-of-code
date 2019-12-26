@@ -60,3 +60,12 @@ const minDistance = intercepts.reduce((min, position) => {
 }, Number.MAX_VALUE)
 
 console.log('min distance', minDistance)
+
+const minSteps = intercepts.reduce((min, position) => {
+  const matchPosition = p => p.x === position.x && p.y === position.y
+  const sum = firstLine.findIndex(matchPosition) + secondLine.findIndex(matchPosition) + 2
+
+  return sum < min ? sum : min
+}, Number.MAX_VALUE)
+
+console.log('min steps', minSteps)

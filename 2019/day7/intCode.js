@@ -1,16 +1,16 @@
 class IntCode {
-  inputs = []
-  outputs = []
+  isComplete = false
+  pointer = 0
 
-  constructor(i) {
-    this.inputs = i
+  constructor(program) {
+    this.codes = program.split(',').map(code => Number(code))
   }
 
-  process(program) {
-    const codes = program.split(',').map(code => Number(code))
-    let pointer = 0
-    let inputPointer = 0
-    let isComplete = false
+  process(inputs) {
+    let inputsPointer = 0
+
+    if(this.isComplete)
+      return
 
     const parseInstruction = (instruction) => {
       let str = String(instruction)
@@ -26,14 +26,14 @@ class IntCode {
     }
 
     const getParam = (mode, index) => {
-      return mode ? codes[index] : codes[codes[index]]
+      return mode ? this.codes[index] : this.codes[this.codes[index]]
     }
 
     const getParams = (count, modes) => {
       let parameters = []
 
       for (let i = 0; i < count; i++) {
-        parameters.push(getParam(modes[i], pointer + i + 1))
+        parameters.push(getParam(modes[i], this.pointer + i + 1))
       }
 
       return parameters
@@ -42,72 +42,72 @@ class IntCode {
     const add = (modes) => {
       let [first, second] = getParams(2, modes)
 
-      codes[codes[pointer + 3]] = first + second
+      this.codes[this.codes[this.pointer + 3]] = first + second
 
-      pointer += 4
+      this.pointer += 4
     }
 
     const multiply = (modes) => {
       let [first, second] = getParams(2, modes)
 
-      codes[codes[pointer + 3]] = first * second
+      this.codes[this.codes[this.pointer + 3]] = first * second
 
-      pointer += 4
+      this.pointer += 4
     }
 
     const read = (modes) => {
-      codes[codes[pointer + 1]] = this.inputs[inputPointer++]
-      pointer += 2
+      this.codes[this.codes[this.pointer + 1]] = inputs[inputsPointer++]
+      this.pointer += 2
     }
 
     const output = (modes) => {
       let [first] = getParams(1, modes)
-      this.outputs.push(first)
-      pointer += 2
+      this.pointer += 2
+      return first
     }
 
     const jumpIfTrue = (modes) => {
       let [first, second] = getParams(2, modes)
 
       if (first)
-        pointer = second
+        this.pointer = second
       else
-        pointer += 3
+        this.pointer += 3
     }
 
     const jumpIfFalse = (modes) => {
       let [first, second] = getParams(2, modes)
 
       if(!first)
-        pointer = second
+        this.pointer = second
       else
-        pointer += 3
+        this.pointer += 3
     }
 
     const lessThan = (modes) => {
       let [first, second] = getParams(2, modes)
 
       if (first < second)
-        codes[codes[pointer + 3]] = 1
+        this.codes[this.codes[this.pointer + 3]] = 1
       else
-        codes[codes[pointer + 3]] = 0
+        this.codes[this.codes[this.pointer + 3]] = 0
 
-      pointer += 4
+      this.pointer += 4
     }
 
     const equals = (modes) => {
       let [first, second] = getParams(2, modes)
 
       if (first == second)
-        codes[codes[pointer + 3]] = 1
+        this.codes[this.codes[this.pointer + 3]] = 1
       else
-        codes[codes[pointer + 3]] = 0
+        this.codes[this.codes[this.pointer + 3]] = 0
 
-      pointer += 4
+      this.pointer += 4
     }
 
     const end = () => {
-      isComplete = true
+      this.isComplete = true
     }
 
     const operations = {
@@ -123,14 +123,14 @@ class IntCode {
     }
 
     do {
-      let { opCode, modes } = parseInstruction(codes[pointer])
+      let { opCode, modes } = parseInstruction(this.codes[this.pointer])
 
       let operation = operations[opCode]
+      let output = operation(modes)
 
-      operation(modes)
-    } while(!isComplete)
-
-    return this.outputs
+      if (output != null)
+        return output
+    } while(!this.isComplete)
   }
 }
 

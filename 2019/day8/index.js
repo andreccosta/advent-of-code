@@ -8,11 +8,17 @@ const pixels = fileContents.split('').map(Number)
 const width = 25
 const height = 6
 
-const layers = [];
+const chunk = (arr, size) => {
+  let result = []
 
-for (let x = 0; x < fileContents.length; x += width * height) {
-  layers.push(pixels.slice(x, x + width * height));
+  for (let i=0 , j=arr.length; i < j; i += size) {
+      result.push(arr.slice(i,i + size))
+  }
+
+  return result
 }
+
+const layers = chunk(pixels, width * height)
 
 const fewestZeros = layers
   .map(layer => ({
@@ -23,3 +29,13 @@ const fewestZeros = layers
   .sort((a, b) => a.zeros - b.zeros)[0]
 
 console.log('checksum', fewestZeros.ones * fewestZeros.twos)
+
+const renderedPixels = []
+
+for (let i = 0; i < width * height; i++) {
+  const layeredPixels = layers.map((layer) => layer[i])
+
+  renderedPixels.push(layeredPixels.find(p => p !== 2))
+}
+
+console.log(chunk(renderedPixels, width).join('\n'))

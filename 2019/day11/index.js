@@ -58,7 +58,7 @@ const hull = Array.from(Array(height + 1), () => new Array(width + 1).fill(' '))
 
 coords.map(coord => {
   const [x, y] = coord.split(',').map(Number)
-  hull[y][x] = panels.get(coord) === 1 ? 'X' : ' '
+  hull[y][x] = panels.get(coord) === 1 ? '█' : ' '
 })
 
 hull.map(r => {

@@ -1,6 +1,8 @@
 class IntCode {
   isDone = false
+  isPaused = false
   pointer = 0
+  inputsPointer = 0
   relativeBase = 0
   outputs = []
 
@@ -8,14 +10,16 @@ class IntCode {
     this.codes = program.split(',').map(code => Number(code))
   }
 
+  continue() {
+    this.isPaused = false
+  }
+
   clear() {
     this.outputs = []
     this.isDone = false
   }
 
-  process(inputs) {
-    let inputsPointer = 0
-
+  process(input) {
     if(this.isDone)
       return
 
@@ -97,7 +101,7 @@ class IntCode {
     const read = (modes) => {
       let outputIndex = getOutIndex(1, modes)
 
-      this.codes[outputIndex] = inputs[inputsPointer++]
+      this.codes[outputIndex] = input
       this.pointer += 2
     }
 
@@ -105,6 +109,7 @@ class IntCode {
       let [first] = getParams(1, modes)
 
       this.outputs.push(first)
+      this.isPaused = true
       this.pointer += 2
     }
 
@@ -178,7 +183,7 @@ class IntCode {
       let { opCode, modes } = parseInstruction(this.codes[this.pointer])
 
       operations[opCode](modes)
-    } while(!this.isDone)
+    } while(!this.isDone && !this.isPaused)
   }
 }
 

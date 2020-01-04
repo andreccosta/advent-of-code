@@ -4,6 +4,9 @@ const path = require('path')
 const buffer = fs.readFileSync(path.join(__dirname, 'input.txt'))
 const fileContents = buffer.toString().trim()
 
+const gcd = (a, b) => !b ? a : gcd(b, a % b);
+const lcm = (a, b) => a * (b / gcd(a, b));
+
 class Moon {
   constructor(position) {
     this.position = position
@@ -21,8 +24,8 @@ class Moon {
 }
 
 let moons = fileContents.split('\n').map(line => {
-  let [_, x, y, z] = /<x=([-]?[0-9]+), y=([-]?[0-9]+), z=([-]?[0-9]+)>/.exec(line).map(Number)
-  return new Moon({ x, y, z})
+  let [x, y, z] = line.match(/(-?\d+)/g).map(Number)
+  return new Moon({ x, y, z })
 })
 
 const simulate = () => {
@@ -41,6 +44,18 @@ const simulate = () => {
   })
 }
 
+const simulateAxis = (axis) => {
+  moons.map(moon => {
+    moons.map(otherMoon => {
+      moon.velocity[axis] += otherMoon.position[axis] != moon.position[axis] ? otherMoon.position[axis] < moon.position[axis] ? -1 : 1 : 0;
+    })
+  })
+
+  moons.map(moon => {
+    moon.position[axis] += moon.velocity[axis]
+  })
+}
+
 const steps = 1000
 
 for (let step = 0; step < steps; step++) {
@@ -50,3 +65,36 @@ for (let step = 0; step < steps; step++) {
 let totalEnergy = moons.reduce((acc, moon) => acc += moon.getTotalEnergy() , 0)
 
 console.log(totalEnergy)
+
+const getAxisState = (moons, axis) => {
+  return moons.map(moon => ({ position: moon.position[axis], velocity: moon.velocity[axis] }))
+}
+
+const compareAxisState = (firstState, secondState) => {
+  return firstState.every((mfs, i) => {
+    let mss = secondState[i]
+
+    return mfs.position == mss.position && mfs.velocity == mss.velocity
+  })
+}
+
+const axes = ['x', 'y', 'z']
+const stepsAxis = new Map()
+
+axes.map(axis => {
+  let axisDone = false
+  let count = 0
+
+  let initialState = getAxisState(moons, axis)
+
+  do {
+    simulateAxis(axis)
+    count++
+
+    axisDone = compareAxisState(initialState, getAxisState(moons, axis))
+  } while (!axisDone)
+
+  stepsAxis.set(axis, count)
+})
+
+console.log(lcm(lcm(stepsAxis.get('x'), stepsAxis.get('y')), stepsAxis.get('z')));

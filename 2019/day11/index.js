@@ -11,7 +11,7 @@ const directions = ['u', 'r', 'd', 'l']
 const intCode = new IntCode(fileContents)
 const panels = new Map()
 
-intCode.process([0])
+intCode.process([1])
 
 while(intCode.outputs && intCode.outputs.length > 0) {
   const turn = intCode.outputs[1] === 0 ? 'l' : 'r'
@@ -26,10 +26,10 @@ while(intCode.outputs && intCode.outputs.length > 0) {
 
   switch (robot.direction) {
     case 'u':
-      robot.position.y++
+      robot.position.y--
       break
     case 'd':
-      robot.position.y--
+      robot.position.y++
       break
     case 'r':
       robot.position.x++
@@ -46,3 +46,21 @@ while(intCode.outputs && intCode.outputs.length > 0) {
 }
 
 console.log('total panels', panels.size)
+
+const coords = [...panels.keys()]
+const { width, height } = coords.reduce((acc, coord) => {
+  const [x, y] = coord.split(',').map(Number)
+
+  return { width: Math.max(acc.width, x), height: Math.max(acc.height, y)}
+}, { width: 0, height: 0 })
+
+const hull = Array.from(Array(height + 1), () => new Array(width + 1).fill(' '))
+
+coords.map(coord => {
+  const [x, y] = coord.split(',').map(Number)
+  hull[y][x] = panels.get(coord) === 1 ? 'X' : ' '
+})
+
+hull.map(r => {
+  console.log(r.join(''))
+})

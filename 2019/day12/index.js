@@ -4,8 +4,8 @@ const path = require('path')
 const buffer = fs.readFileSync(path.join(__dirname, 'input.txt'))
 const fileContents = buffer.toString().trim()
 
-const gcd = (a, b) => !b ? a : gcd(b, a % b);
-const lcm = (a, b) => a * (b / gcd(a, b));
+const gcd = (a, b) => !b ? a : gcd(b, a % b)
+const lcm = (a, b) => a * (b / gcd(a, b))
 
 class Moon {
   constructor(position) {
@@ -31,9 +31,9 @@ let moons = fileContents.split('\n').map(line => {
 const simulate = () => {
   moons.map(moon => {
     moons.map(otherMoon => {
-      moon.velocity.x += otherMoon.position.x != moon.position.x ? otherMoon.position.x < moon.position.x ? -1 : 1 : 0;
-      moon.velocity.y += otherMoon.position.y != moon.position.y ? otherMoon.position.y < moon.position.y ? -1 : 1 : 0;
-      moon.velocity.z += otherMoon.position.z != moon.position.z ? otherMoon.position.z < moon.position.z ? -1 : 1 : 0;
+      moon.velocity.x += otherMoon.position.x != moon.position.x ? otherMoon.position.x < moon.position.x ? -1 : 1 : 0
+      moon.velocity.y += otherMoon.position.y != moon.position.y ? otherMoon.position.y < moon.position.y ? -1 : 1 : 0
+      moon.velocity.z += otherMoon.position.z != moon.position.z ? otherMoon.position.z < moon.position.z ? -1 : 1 : 0
     })
   })
 
@@ -47,7 +47,7 @@ const simulate = () => {
 const simulateAxis = (axis) => {
   moons.map(moon => {
     moons.map(otherMoon => {
-      moon.velocity[axis] += otherMoon.position[axis] != moon.position[axis] ? otherMoon.position[axis] < moon.position[axis] ? -1 : 1 : 0;
+      moon.velocity[axis] += otherMoon.position[axis] != moon.position[axis] ? otherMoon.position[axis] < moon.position[axis] ? -1 : 1 : 0
     })
   })
 
@@ -97,4 +97,4 @@ axes.map(axis => {
   stepsAxis.set(axis, count)
 })
 
-console.log(lcm(lcm(stepsAxis.get('x'), stepsAxis.get('y')), stepsAxis.get('z')));
+console.log(lcm(lcm(stepsAxis.get('x'), stepsAxis.get('y')), stepsAxis.get('z')))

@@ -34,8 +34,24 @@ const calculatePhase = (signal) =>
 
 const phases = 100
 
-for (let i = 0; i < phases; i++) {
-  signal = calculatePhase(signal)
-}
+// for (let i = 0; i < phases; i++) {
+//   signal = calculatePhase(signal)
+// }
 
-console.log(signal.join(''))
+// console.log(signal.slice(messageIndex, messageIndex + 8))
+// console.log(signal.join(''))
+
+const messageOffset = Number(fileContents.slice(0, 7))
+signal = fileContents
+  .repeat(10000)
+  .split('')
+  .map(Number)
+  .slice(messageOffset)
+
+  for (let p = 0; p < phases; p++) {
+    for (let i = signal.length - 1; i >= 0; i--) {
+      signal[i] = ((signal[i + 1] || 0) + signal[i]) % 10
+    }
+  }
+
+console.log(signal.slice(0, 8).join(''))

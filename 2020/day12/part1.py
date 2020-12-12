@@ -1,8 +1,6 @@
 file = open('input.txt', 'r')
 lines = file.read().splitlines()
 
-directions = ['N', 'E', 'S', 'W']
-
 """
 Starts facing east
 
@@ -15,7 +13,8 @@ Action R means to turn right the given number of degrees.
 Action F means to move forward by the given value in the direction the ship is currently facing.
 """
 
-direction = 'E'
+directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+direction = (1, 0)
 position = (0, 0)
 
 
@@ -25,16 +24,10 @@ def _rotate(degrees):
 
 
 def _move(position, direction, count):
-    if direction == 'N':
-        position = (position[0] + count, position[1])
-    elif direction == 'S':
-        position = (position[0] - count, position[1])
-    elif direction == 'E':
-        position = (position[0], position[1] + count)
-    elif direction == 'W':
-        position = (position[0], position[1] - count)
+    dx, dy = direction
+    px, py = position
 
-    return position
+    return (px + dx * count, py + dy * count)
 
 
 for line in lines:
@@ -48,6 +41,6 @@ for line in lines:
     elif instruction == 'F':
         position = _move(position, direction, arg)
     else:
-        position = _move(position, instruction, arg)
+        position = _move(position, directions["NESW".index(instruction)], arg)
 
 print(sum(abs(pos) for pos in position))

@@ -1,9 +1,5 @@
-import math
-
 file = open('input.txt', 'r')
 lines = file.read().splitlines()
-
-directions = ['N', 'E', 'S', 'W']
 
 """
 Starts facing east
@@ -17,41 +13,32 @@ Action R means to rotate the waypoint around the ship right (clockwise) the give
 Action F means to move forward to the waypoint a number of times equal to the given value
 """
 
+directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 ship = (0, 0)
-waypoint = (1, 10)
+waypoint = (10, 1)
 
 
 def _rotate(point, degrees):
-    ns, ew = point
+    px, py = point
 
     if degrees == 90:
-        nns = -ew
-        new = ns
+        nx = -py
+        ny = px
     elif degrees == 180:
-        nns = -ns
-        new = -ew
+        nx = -px
+        ny = -py
     elif degrees == 270:
-        nns = ew
-        new = -ns
+        nx = py
+        ny = -px
 
-    return (nns, new)
+    return (nx, ny)
 
 
 def _move(position, direction, count):
-    if direction == 'N':
-        position = (position[0] + count, position[1])
-    elif direction == 'S':
-        position = (position[0] - count, position[1])
-    elif direction == 'E':
-        position = (position[0], position[1] + count)
-    elif direction == 'W':
-        position = (position[0], position[1] - count)
+    dx, dy = direction
+    px, py = position
 
-    return position
-
-
-def _moveTo(position, target, count):
-    return (position[0] + (target[0] * count), position[1] + (target[1] * count))
+    return (px + dx * count, py + dy * count)
 
 
 for line in lines:
@@ -59,12 +46,12 @@ for line in lines:
     arg = int(line[1:])
 
     if instruction == 'R':
-        waypoint = _rotate(waypoint, arg)
-    elif instruction == 'L':
         waypoint = _rotate(waypoint, 360 - arg)
+    elif instruction == 'L':
+        waypoint = _rotate(waypoint, arg)
     elif instruction == 'F':
-        ship = _moveTo(ship, waypoint, arg)
+        ship = _move(ship, waypoint, arg)
     else:
-        waypoint = _move(waypoint, instruction, arg)
+        waypoint = _move(waypoint, directions["NESW".index(instruction)], arg)
 
 print(sum(abs(pos) for pos in ship))

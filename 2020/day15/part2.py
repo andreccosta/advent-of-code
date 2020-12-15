@@ -12,10 +12,7 @@ def _simulate():
         memory[n] = deque([i, None], 2)
 
     for i in range(i + 1, target):
-        if memory[n] is None:
-            memory[0].appendleft(i)
-            n = 0
-        elif memory[n].count(None) > 0:
+        if memory[n].count(None) > 0:
             n = 0
             memory[n].appendleft(i)
         else:

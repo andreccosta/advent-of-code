@@ -9,19 +9,19 @@ target = 2020
 
 def _simulate():
     for i, n in enumerate(start):
-        memory[n] = deque([i, None], 2)
+        if i < len(start) - 1:
+            memory[n] = i
 
     for i in range(i + 1, target):
-        if memory[n].count(None) > 0:
-            n = 0
-            memory[n].appendleft(i)
-        else:
-            n = memory[n][0] - memory[n][1]
 
-            if n in memory:
-                memory[n].appendleft(i)
-            else:
-                memory[n] = deque([i, None], 2)
+        if n in memory:
+            prev = memory[n]
+            diff = (i - 1) - prev
+            memory[n] = i - 1
+            n = diff
+        else:
+            memory[n] = i - 1
+            n = 0
 
     return n
 

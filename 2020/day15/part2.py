@@ -1,5 +1,3 @@
-from collections import deque
-
 file = open('input.txt', 'r')
 start = [int(n) for n in file.read().strip().split(',')]
 

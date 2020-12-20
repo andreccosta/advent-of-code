@@ -1,3 +1,4 @@
+import collections
 from operator import add, sub
 
 file = open('input.txt', 'r')
@@ -13,23 +14,23 @@ def _row(tile, n):
 
 
 class Tile:
-    def __init__(self, s, skip=False):
-        self.body = s.splitlines()
-
-        if not skip:
+    def __init__(self, s):
+        if ':\n' in s:
             self.id, self.content = s.split(':\n')
             self.body = [l for l in self.content.splitlines()]
 
-            self.edges = [
-                _col(self.body, 0),
-                _col(self.body, len(self.body) - 1),
-                _row(self.body, 0),
-                _row(self.body, len(self.body) - 1)
-            ]
-
-            self.edges += [s[::-1] for s in self.edges]
-
             self.id = int(self.id.replace('Tile ', ''))
+        else:
+            self.body = s.splitlines()
+
+        self.edges = [
+            _col(self.body, 0),
+            _col(self.body, len(self.body) - 1),
+            _row(self.body, 0),
+            _row(self.body, len(self.body) - 1)
+        ]
+
+        self.edges += [s[::-1] for s in self.edges]
 
     def variants(self):
         t = [''.join(line[j] for line in self.body)
@@ -47,10 +48,7 @@ class Tile:
         ]
 
 
-tiles = []
-
-for block in blocks:
-    tiles.append(Tile(block))
+tiles = [Tile(block) for block in blocks]
 
 board = dict()
 board[(0, 0)] = tiles[0].body
@@ -84,12 +82,6 @@ while tiles:
     for i in reversed(sorted(set(dels))):
         del tiles[i]
 
-
-minr = min(pos[0] for pos in board)
-maxr = max(pos[0] for pos in board)
-minc = min(pos[1] for pos in board)
-maxc = max(pos[1] for pos in board)
-
 boardstr = ''
 
 for r in range(min(pos[0] for pos in board), max(pos[0] for pos in board) + 1):
@@ -98,7 +90,7 @@ for r in range(min(pos[0] for pos in board), max(pos[0] for pos in board) + 1):
             boardstr += board[(r, c)][1 + i][1:-1]
         boardstr += '\n'
 
-board = Tile(boardstr, True)
+board = Tile(boardstr)
 
 monster = """                  #
 #    ##    ##    ###
@@ -128,3 +120,4 @@ for variant in board.variants():
 
     if sightings > 0:
         print(total_hashes - monster_hashes * sightings)
+        break

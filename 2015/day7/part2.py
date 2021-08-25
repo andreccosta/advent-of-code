@@ -1,7 +1,7 @@
 import re
 
 content = open('input.txt', 'r').read()
-lines = content.splitlines()
+lines = content.strip().splitlines()
 
 machine = {}
 
@@ -24,9 +24,7 @@ ops = {
 
 
 def _parse_arg(arg):
-    if type(arg) == int:
-        return arg
-    elif re.match(r'\d+', arg):
+    if re.match(r'\d+', arg):
         return int(arg)
     else:
         machine[arg] = compute(machine[arg])
@@ -34,7 +32,9 @@ def _parse_arg(arg):
 
 
 def compute(exp):
-    if type(exp) == list or type(exp) == tuple:
+    if type(exp) == int:
+        return exp
+    elif type(exp) == tuple:
         if len(exp) == 1:
             return _parse_arg(exp[0])
         elif len(exp) == 2:

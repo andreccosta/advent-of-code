@@ -1,0 +1,8 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+
+__pycache__/
+bin/
+.cache
+.env

@@ -34,9 +34,4 @@ def calculate(reindeer, seconds):
 best = 0
 seconds = 2503
 
-for r in reindeers:
-    distance = calculate(r, seconds)
-    if distance > best:
-        best = distance
-
-print(best)
+print(max(calculate(r, seconds) for r in reindeers))

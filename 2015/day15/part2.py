@@ -18,19 +18,16 @@ combs = itertools.combinations_with_replacement(ingredients, 100)
 
 
 def score(comb):
-    cap = dur = flavor = texture = cal = 0
+    partials = [0, 0, 0, 0]
+    cals = 0
 
     for i in ingredients:
         spoons = comb.count(i)
-        info = ingredients[i]
+        for idx, v in enumerate(ingredients[i][:-1]):
+            partials[idx] += spoons * v
+        cals += spoons * ingredients[i][4]
 
-        cap += spoons * info[0]
-        dur += spoons * info[1]
-        flavor += spoons * info[2]
-        texture += spoons * info[3]
-        cal += spoons * info[4]
-
-    return max(0, cap) * max(0, dur) * max(0, flavor) * max(0, texture) if cal == 500 else 0
+    return math.prod([max(0, v) for v in partials]) if cals == 500 else 0
 
 
 print(max(score(c) for c in combs))

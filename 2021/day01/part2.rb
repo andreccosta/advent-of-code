@@ -1,14 +1,10 @@
-lines = File.readlines('input.txt')
-  .map(&:chomp)
+lines = File.readlines('input.txt', chomp: true)
   .map(&:to_i)
 
-prev = nil
-increased_count = 0
+count = 0
 
-lines.each.with_index(2) do |l, i|
-  curr = lines[i-2..i].sum
-  increased_count += 1 if !prev.nil? && curr > prev
-  prev = curr
+(3..lines.length - 1).each do |i|
+  count += 1 if lines[i-2..i].sum > lines[i-3..i-1].sum
 end
 
-p increased_count
+p count

@@ -1,8 +1,10 @@
 # Advent of Code
 
-Solutions to the popular Advent of Code challenge written in multiple languages.
+Solutions to the popular [Advent of Code](https://adventofcode.com) puzzles written in multiple languages.
 
 ## Current
+
+[2021](https://adventofcode.com/2021)
 
 ## Past
 

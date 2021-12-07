@@ -1,12 +1,23 @@
 line = File.read('input.txt', chomp: true)
-state = line.split(',').map(&:to_i)
+state = line.split(',').map(&:to_i).tally
 
 def step(state)
-  state.flat_map { |s| s.zero? ? [6, 8] : s - 1 }
+  new_state = Hash.new(0)
+
+  state.each do |k, v|
+    if k.zero?
+      new_state[8] += v
+      new_state[6] += v
+    else
+      new_state[k - 1] += v
+    end
+  end
+
+  new_state
 end
 
 80.times do
   state = step(state)
 end
 
-p state.length
+p state.values.sum

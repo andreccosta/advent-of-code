@@ -14,7 +14,7 @@ end
 
 def step(map)
   # energy increases by 1
-  map.each { |pos, e| map[pos] = e + 1 }
+  map.transform_values!(&:next)
 
   # 9 or higher flashes
   initial_flashes = map.filter { |_, e| e > 9 }.keys
@@ -24,9 +24,7 @@ def step(map)
   flashes = map.count { |_, e| e > 9 }
 
   # reset flashed to 0
-  map.each do |pos, e|
-    map[pos] = 0 if e > 9
-  end
+  map.transform_values! { |v| v > 9 ? 0 : v }
 
   flashes
 end

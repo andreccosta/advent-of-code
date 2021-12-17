@@ -14,10 +14,24 @@ def factorial_sum(n)
   (n**2 + n) / 2
 end
 
+def first_factorial_sum(target)
+  n = 0
+
+  while true
+    return n if factorial_sum(n) > target
+    n += 1
+  end
+end
+
+low_vel_x = first_factorial_sum(target[0].first)
+high_vel_x = target[0].last
+low_vel_y = target[1].first
+high_vel_y = -target[1].first
+
 initial_velocities = []
 
-(12..125).each do |velocity_x|
-  (-159..159).each do |velocity_y|
+(low_vel_x..high_vel_x).each do |velocity_x|
+  (low_vel_y..high_vel_y).each do |velocity_y|
     pos = [0, 0]
     velocity = [velocity_x, velocity_y]
     best_height = 0

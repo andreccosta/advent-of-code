@@ -10,18 +10,6 @@ def step(pos, velocity)
   [new_pos, new_velocity]
 end
 
-heights = []
-min_velocity_x = 70
-
-def factorial_sum(n)
-  total = 0
-  while n > 0
-    total += n
-    n -= 1
-  end
-  total
-end
-
 def factorial_sum(n)
   (n**2 + n) / 2
 end
@@ -39,11 +27,10 @@ end
 low_vel_x = first_factorial_sum(target[0].first)
 high_vel_x = first_factorial_sum(target[0].last) - 1
 
-low_vel_y = 150
-high_vel_y = 159
+heights = []
 
 (low_vel_x..high_vel_x).each do |velocity_x|
-  (low_vel_y..high_vel_y).each do |velocity_y|
+  (1..200).each do |velocity_y|
     pos = [0, 0]
     velocity = [velocity_x, velocity_y]
     best_height = 0

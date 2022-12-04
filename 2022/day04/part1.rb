@@ -1,13 +1,11 @@
 lines = File.readlines("input.txt", chomp: true)
 
-def to_range(part)
-  Range.new(*part.split("-").map(&:to_i))
-end
-
-p lines.map { |line|
-  first, second = line
+p lines.count { |line|
+  fs, fe, ss, se = line
     .split(",")
-    .map { to_range(_1) }
+    .flat_map { |p|
+      p.split("-").map(&:to_i)
+    }
 
-  first.cover?(second) || second.cover?(first)
-}.count(true)
+  fs <= ss && se <= fe || ss <= fs && fe <= se
+}

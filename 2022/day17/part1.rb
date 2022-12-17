@@ -4,15 +4,7 @@ moves = File
   .readlines("input.txt", chomp: true)
   .first
 
-map = Set[
-  [0, 0],
-  [1, 0],
-  [2, 0],
-  [3, 0],
-  [4, 0],
-  [5, 0],
-  [6, 0]
-]
+map = {}
 
 shapes = [
   [[0, 0], [1, 0], [2, 0], [3, 0]],
@@ -26,30 +18,17 @@ def add(pos, part)
   [pos[0] + part[0], pos[1] + part[1]]
 end
 
-def wall_collision_check(map, shape, pos)
-  coords = shape.map { |part| add(pos, part) }
-  coords.any? { |coord| map.include?(coord) } || coords.any? { |coord| coord.first < 0 || coord.first > 6 }
+def collides?(map, rock, dir)
+  rock = move(rock, dir)
+  rock.any? { |pos| map[pos] || pos.first < 0 || pos.first > 6 || pos.last < 0 }
 end
 
-def collision_check(map, shape, pos)
-  coords = shape.map { |part| add(pos, part) }
-  coords.any? { |coord| map.include?(coord) }
+def move(rock, dir)
+  rock.map { |pos| add(pos, dir) }
 end
 
-def print_map(map)
-  min_x, max_x = map.keys.map(&:first).minmax
-  min_y, max_y = map.keys.map(&:last).minmax
-
-  (min_y..max_y).to_a.reverse.map do |y|
-    p (min_x..max_x).map { |x| map[[x, y]] || "." }.join("")
-  end
-end
-
-def add_rock_to_map(map, shape, pos)
-  coords = shape.map { |part| add(pos, part) }
-  coords.each do |coord|
-    map << coord
-  end
+def height(map)
+  map.empty? ? 0 : map.keys.map(&:last).max + 1
 end
 
 steps = 2022
@@ -57,34 +36,25 @@ moves_i = 0
 
 steps.times do |i|
   rock = shapes[i % shapes.size]
-  max_y = map.map(&:last).max
-
-  pos = [2, max_y + 4]
+  rock = move(rock, [2, height(map) + 3])
 
   loop do
     # handle jets
     move = moves[moves_i % moves.size]
     moves_i += 1
 
-    new_pos = pos.dup
-    new_pos[0] += (move == "<") ? -1 : 1
-
-    # check for wall collisions
-    if wall_collision_check(map, rock, new_pos)
-      new_pos = pos # reset position
-    end
+    dir = (move == "<") ? [-1, 0] : [1, 0]
+    rock = move(rock, dir) unless collides?(map, rock, dir)
 
     # move down
-    new_pos[1] -= 1
-
-    if collision_check(map, rock, new_pos)
-      new_pos[1] += 1
-      add_rock_to_map(map, rock, new_pos)
+    dir = [0, -1]
+    if collides?(map, rock, dir)
+      rock.each { |pos| map[pos] = true }
       break
+    else
+      rock = move(rock, dir)
     end
-
-    pos = new_pos
   end
 end
 
-p map.map(&:last).max
+p map.keys.map(&:last).max + 1

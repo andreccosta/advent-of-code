@@ -12,9 +12,7 @@ end
 cards.each do |k, (common, x)|
   next unless common > 0
 
-  x.times do
-    (k + 1..k + common).each { cards[_1][-1] += 1 }
-  end
+  (k + 1..k + common).each { cards[_1][-1] += x }
 end
 
 p cards.values.map(&:last).sum

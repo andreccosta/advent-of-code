@@ -6,9 +6,32 @@ def get(map, pos)
 end
 
 def move(pos, dir)
-  diff = {"r" => [1, 0], "l" => [-1, 0], "u" => [0, -1], "d" => [0, 1]}
-  pos.zip(diff[dir]).map { |x| x.reduce(:+) }
+  diff = {
+    "r" => [1, 0],
+    "l" => [-1, 0],
+    "u" => [0, -1],
+    "d" => [0, 1]
+  }
+
+  pos[0] += diff[dir][0]
+  pos[1] += diff[dir][1]
+  pos
 end
+
+MIRRORS = {
+  "\\" => {
+    "r" => "d",
+    "l" => "u",
+    "u" => "l",
+    "d" => "r"
+  },
+  "/" => {
+    "r" => "u",
+    "l" => "d",
+    "u" => "r",
+    "d" => "l"
+  }
+}
 
 def run(map, beams)
   seen = Set.new
@@ -35,28 +58,8 @@ def run(map, beams)
           dir = "r"
           next_beams << [move(pos.dup, "l"), "l"]
         end
-      when "\\"
-        dir = case dir
-        when "r"
-          "d"
-        when "l"
-          "u"
-        when "u"
-          "l"
-        when "d"
-          "r"
-        end
-      when "/"
-        dir = case dir
-        when "r"
-          "u"
-        when "l"
-          "d"
-        when "u"
-          "r"
-        when "d"
-          "l"
-        end
+      when "\\", "/"
+        dir = MIRRORS[cp][dir]
       end
 
       next_beams << [move(pos, dir), dir]

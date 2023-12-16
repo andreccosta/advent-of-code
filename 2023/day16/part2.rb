@@ -6,9 +6,32 @@ def get(map, pos)
 end
 
 def move(pos, dir)
-  diff = {"r" => [1, 0], "l" => [-1, 0], "u" => [0, -1], "d" => [0, 1]}
-  pos.zip(diff[dir]).map { |x| x.reduce(:+) }
+  diff = {
+    "r" => [1, 0],
+    "l" => [-1, 0],
+    "u" => [0, -1],
+    "d" => [0, 1]
+  }
+
+  pos[0] += diff[dir][0]
+  pos[1] += diff[dir][1]
+  pos
 end
+
+MIRRORS = {
+  "\\" => {
+    "r" => "d",
+    "l" => "u",
+    "u" => "l",
+    "d" => "r"
+  },
+  "/" => {
+    "r" => "u",
+    "l" => "d",
+    "u" => "r",
+    "d" => "l"
+  }
+}
 
 def run(map, beams)
   seen = Set.new
@@ -35,28 +58,8 @@ def run(map, beams)
           dir = "r"
           next_beams << [move(pos.dup, "l"), "l"]
         end
-      when "\\"
-        dir = case dir
-        when "r"
-          "d"
-        when "l"
-          "u"
-        when "u"
-          "l"
-        when "d"
-          "r"
-        end
-      when "/"
-        dir = case dir
-        when "r"
-          "u"
-        when "l"
-          "d"
-        when "u"
-          "r"
-        when "d"
-          "l"
-        end
+      when "\\", "/"
+        dir = MIRRORS[cp][dir]
       end
 
       next_beams << [move(pos, dir), dir]
@@ -68,26 +71,18 @@ def run(map, beams)
   seen.uniq { _1.first }.size
 end
 
-energy = []
+max_energy = 0
 
-# top edge
-(0..lines[0].length - 1).map { |x| [x, 0] }.each do |pos|
-  energy << run(lines, [[pos, "d"]])
+# top and bottom edges
+(0..lines[0].length - 1).each do |x|
+  max_energy = [max_energy, run(lines, [[[x, 0], "d"]])].max
+  max_energy = [max_energy, run(lines, [[[x, lines.length - 1], "u"]])].max
 end
 
-# bottom edge
-(0..lines[0].length - 1).map { |x| [x, lines.length - 1] }.each do |pos|
-  energy << run(lines, [[pos, "u"]])
+# left and right edges
+(0..lines.length - 1).each do |y|
+  max_energy = [max_energy, run(lines, [[[0, y], "r"]])].max
+  max_energy = [max_energy, run(lines, [[[lines[0].length, y], "r"]])].max
 end
 
-# left edge
-(0..lines.length - 1).map { |y| [0, y] }.each do |pos|
-  energy << run(lines, [[pos, "r"]])
-end
-
-# right edge
-(0..lines.length - 1).map { |y| [lines[0].length - 1, y] }.each do |pos|
-  energy << run(lines, [[pos, "l"]])
-end
-
-p energy.max
+p max_energy

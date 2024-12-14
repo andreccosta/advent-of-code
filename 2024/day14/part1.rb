@@ -1,5 +1,3 @@
-require 'matrix'
-
 lines = File.readlines("input.txt", chomp: true)
 
 MAX_X = 101

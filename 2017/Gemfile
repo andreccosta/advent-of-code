@@ -2,6 +2,5 @@
 
 source "https://rubygems.org"
 
-# gem "rails"
-
-gem "rspec", "~> 3.11"
+gem "rspec", "~> 3.13"
+gem "debug", "~> 1.10"
